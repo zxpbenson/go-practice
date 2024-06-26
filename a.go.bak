@@ -1,0 +1,55 @@
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+type mint int
+
+func (this mint) add(other int) (result mint) {
+	fmt.Printf("detect %d + %d\n", this, other)
+	result = this + mint(other)
+	return
+}
+
+func main() {
+	fmt.Println("hello")
+	var mi1 mint = mint(3)
+	switch tag := mi1.add(2); tag {
+	case mi1.add(1):
+		fmt.Printf("match add 1\n")
+	case mi1.add(2):
+		fmt.Printf("match add 2\n")
+	case mi1.add(3):
+		fmt.Printf("match add 3\n")
+	default:
+		fmt.Printf("match nothing\n")
+	}
+
+	t0 := time.Now()
+	expensiveCall()
+	t1 := time.Now()
+	fmt.Printf("The call took %v to run.\n", t1.Sub(t0))
+
+	ticker := time.NewTicker(time.Second)
+	defer ticker.Stop()
+	done := make(chan bool)
+	go func() {
+		time.Sleep(10 * time.Second)
+		done <- true
+	}()
+	for {
+		select {
+		case <-done:
+			fmt.Println("Done!")
+			return
+		case t := <-ticker.C:
+			fmt.Println("Current time: ", t)
+		}
+	}
+}
+
+func expensiveCall() {
+	time.Sleep(2 * time.Second)
+}
